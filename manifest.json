@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+
+  "name": "FBSMILE",
+  "description": "FB happiness rating",
+  "version": "1.0",
+  "icons": {
+    "128": "icon.png"
+  },
+  "browser_action": {
+    "default_icon": "icon.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://www.facebook.com/*"],
+      "js": ["script.js"]
+    }
+  ],
+  "permissions": [
+    "activeTab",
+    "http://*/",
+    "https://*/",
+    "downloads",
+    "tabs",
+    "webNavigation"
+  ]
+}
