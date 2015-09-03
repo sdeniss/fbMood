@@ -83,7 +83,7 @@ function addMood(postId, mood, time, callback)
     x.send(body);
     //document.getElementsByTagName("body")[0].innerText = 'a';
 }
-
+var viewed = []
 setInterval(function () {
     var posts = Array.prototype.slice.call(document.getElementsByClassName("_1dwg"));
     var posts_ = [];
@@ -146,7 +146,7 @@ var barWidth = 30;
 
 
 
-				function updateData(data,uniqueId) {
+				function updateData(data,uniqueId,time) {
           var svg;
           if(d3.select("#"+uniqueId).select("svg")[0][0] == null){
              svg = d3.select("#"+uniqueId).append("svg")
@@ -210,7 +210,7 @@ var barWidth = 30;
 					rects.exit().remove();
 					texts.exit().remove();
 
-          addMood(uniqueId,emotionData,0)
+          addMood(uniqueId,emotionData,time)
 				}
 
 
@@ -251,7 +251,7 @@ document.addEventListener('clmtrackrIteration', function(event) {
         if(div){
           var child = div.childNodes[0];
           var uniqueId = videos[i].getAttribute("id")+"emotion";
-          updateData(emotionData,uniqueId)
+          updateData(emotionData,uniqueId,videos[i].currentTime)
           if(!document.getElementById(uniqueId)){
             var p = document.createElement("div");
             p.setAttribute("id",uniqueId);
