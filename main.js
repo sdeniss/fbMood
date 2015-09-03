@@ -146,7 +146,7 @@ setInterval(function () {
                     title.appendChild(topTxt);
                 }
                 var txt = resp["embed"][i][0];
-                topTxt.innerHTML = txt != ''? txt : ' <img src="https://static.xx.fbcdn.net/rsrc.php/v2/yV/r/a7qcbliVfQ1.png" height="16" style="vertical-align: -2.9px;"> ' + post_id;
+                topTxt.innerHTML = txt != ''? txt : ' <img src="https://static.xx.fbcdn.net/rsrc.php/v2/yV/r/a7qcbliVfQ1.png" height="16" style="vertical-align: -2.9px;"> ';
             }
         }
     });
