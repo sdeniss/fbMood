@@ -3,6 +3,7 @@ vid.setAttribute("id", "videoel");
 vid.setAttribute("width", "500");
 vid.setAttribute("height", "500");
 vid.setAttribute("preload", "auto");
+vid.style.visibility = "hidden";
 document.body.appendChild(vid);
 
 
@@ -33,11 +34,38 @@ if (navigator.webkitGetUserMedia) {
   //insertAltVideo(vid);
   alert("This demo depends on getUserMedia, which your browser does not seem to support. :(");
 }
+
+var isYoutube = document.URL && document.URL.indexOf("youtube") > -1;
 function getFbid(){
     return document.getElementsByClassName("_s0 _2dpc _rw img")[0].getAttribute("id").split("profile_pic_header_")[1];
 }
 /*********** setup of emotion detection *************/
+function getPostId(post){
+    var dt = post.getElementsByClassName("_5pcq")[0];
+    if(dt){
+      var href = dt.href;
+      var postId =0;
+      if(href){
+        if(href.indexOf("permalink.php") > -1){
+            postId = href.split("story_fbid=")[1].split("&")[0];
+        }else if(href.indexOf("photo.php") > -1){
+            postId = href.split("fbid=")[1].split("&")[0]
+        }else{
+            var parts = href.split("/");
+            for (var j = parts.length; j >= 0; j--) {
+                var part = parts[j];
+                if (!isNaN(part) && part != "") {
+                    postId = part;
+                    break;
+                }
+            }
+        }
+      }
+    }
 
+
+    return postId;
+}
 function getInfo(posts, callback)
 {
     var x = new XMLHttpRequest();
@@ -63,9 +91,13 @@ function getInfo(posts, callback)
 
 function addMood(postId, mood, time, callback)
 {
+    var userId  = 1;
+    if(!isYoutube){
+      userId = getFbid();
+    }
     var x = new XMLHttpRequest();
     var url = "https://happyhour-studit.rhcloud.com/addMood";
-    var body = JSON.stringify({"user_id":getFbid(), "post_id": postId, "mood": JSON.stringify(mood), "time": time});
+    var body = JSON.stringify({"user_id":userId, "post_id": postId, "mood": JSON.stringify(mood), "time": time});
     x.responseType = 'json';
     x.open("POST", url, true);
     //x.setRequestHeader("Content-Length", body.length);
@@ -85,6 +117,7 @@ function addMood(postId, mood, time, callback)
 }
 var viewed = []
 setInterval(function () {
+  if(isYoutube){ return; }
     var posts = Array.prototype.slice.call(document.getElementsByClassName("_1dwg"));
     var posts_ = [];
     for(var i = 0; i < posts.length; i++){
@@ -99,7 +132,6 @@ setInterval(function () {
         }
     }
     getInfo(posts_, function(resp){
-        log(JSON.stringify(resp));
         for(i = 0; i < posts.length; i++){
             var post = posts[i];
             if(viewed.indexOf(post) == -1 || true) {
@@ -118,7 +150,7 @@ setInterval(function () {
             }
         }
     });
-}, 1000);
+}, 5000);
 var ctrack = new clm.tracker({useWebGL : true});
 ctrack.init(pModel);
 
@@ -126,7 +158,6 @@ ctrack.init(pModel);
 vid.play();
 // start tracking
 ctrack.start(vid);
-
 var ec = new emotionClassifier();
 ec.init(emotionModel);
 var emotionData = ec.getBlank();
@@ -145,8 +176,8 @@ var barWidth = 30;
 					.domain([0,1]).range([0, height]);
 
 
-
-				function updateData(data,uniqueId,time) {
+var lastTime = Date.now();
+				function updateData(data,uniqueId,postId, time) {
           var svg;
           if(d3.select("#"+uniqueId).select("svg")[0][0] == null){
              svg = d3.select("#"+uniqueId).append("svg")
@@ -210,7 +241,11 @@ var barWidth = 30;
 					rects.exit().remove();
 					texts.exit().remove();
 
-          addMood(uniqueId,emotionData,time)
+          if(Date.now() - lastTime > 3000){
+            addMood(postId,data,time)
+            lastTime = Date.now()
+          }
+
 				}
 
 
@@ -245,22 +280,40 @@ document.addEventListener('clmtrackrIteration', function(event) {
   var videos = document.getElementsByTagName("video");
   var i;
   for (i = 0; i < videos.length; i++) {
+    if(isYoutube && videos[i].className.indexOf("html5-main-video")==-1){
+      continue;
+    }
       if(!videos[i].paused){
-        videos[i].style.visibility = "hidden";
-        var div = upTo(videos[i],"userContentWrapper");
+        var div;
+
+        if(isYoutube){
+           div = document.getElementById("watch-header")
+        }
+        else {
+           div = upTo(videos[i],"userContentWrapper");
+        }
+
+
         if(div){
           var child = div.childNodes[0];
+          if(isYoutube){
+            child = div;
+          }
           var uniqueId = videos[i].getAttribute("id")+"emotion";
-          updateData(emotionData,uniqueId,videos[i].currentTime)
+          postId = uniqueId;
+          if(!isYoutube){
+            var postId = getPostId(upTo(videos[i],"_1dwg"))
+          }
+
+          updateData(emotionData,uniqueId,postId,videos[i].currentTime)
           if(!document.getElementById(uniqueId)){
             var p = document.createElement("div");
             p.setAttribute("id",uniqueId);
 
             //var t = document.createTextNode(JSON.stringify(emotionData));
             //p.appendChild(t);
-            if(child != null){
+            if(child){
               child.appendChild(p);
-              lastUnique = uniqueId;
             }
         }
 
