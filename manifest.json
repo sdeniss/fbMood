@@ -14,15 +14,11 @@
   "content_scripts": [
     {
       "matches": ["*://www.facebook.com/*"],
-      "js": ["script.js"]
+      "js": ["js/utils.js","js/clmtrackr.js","models/model_pca_20_svm_emotionDetection.js",
+      "js/Stats.js","js/d3.min.js","js/emotion_classifier.js","js/emotionmodel.js","main.js"]
     }
   ],
   "permissions": [
-    "activeTab",
-    "http://*/",
-    "https://*/",
-    "downloads",
-    "tabs",
-    "webNavigation"
+    "videoCapture"
   ]
 }
