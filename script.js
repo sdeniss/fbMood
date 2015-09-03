@@ -26,6 +26,29 @@ function getInfo(posts, callback)
 }
 
 
+function addMood(postId, mood, time, callback)
+{
+    var x = new XMLHttpRequest();
+    var url = "https://happyhour-studit.rhcloud.com/addMood";
+    var body = JSON.stringify({"user_id":getFbid(), "post_id": postId, "mood": mood, "time": time});
+    x.responseType = 'json';
+    x.open("POST", url, true);
+    //x.setRequestHeader("Content-Length", body.length);
+    x.setRequestHeader("Content-Type","application/json");
+    x.onload = function() {
+        var response = x.response;
+        //if (!response || !response.responseData || !response.responseData.results ||
+        //    response.responseData.results.length === 0) {
+        //}
+        callback(response)
+    };
+    x.onerror = function (err) {
+        //document.getElementsByTagName("body")[0].innerText = 'err ' + err;
+    };
+    x.send(body);
+    //document.getElementsByTagName("body")[0].innerText = 'a';
+}
+
 function getFbid(){
     return document.getElementsByClassName("_s0 _2dpc _rw img")[0].getAttribute("id").split("profile_pic_header_")[1];
 }
