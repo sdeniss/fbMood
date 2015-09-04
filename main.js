@@ -139,14 +139,23 @@ setInterval(function () {
                     viewed.push(post);
                 var post_id = getPostId(post);
                 var title = post.getElementsByClassName("fwn fcg")[0];
+                var midTitle = post.getElementsByClassName("_5pcp")[0];
                 var topTxt = document.getElementById("fbmood_top_text_" + post_id);
                 if(!topTxt) {
-                    var topTxt = document.createElement("span");
+                    topTxt = document.createElement("span");
                     topTxt.id = "fbmood_top_text_" + post_id;
                     title.appendChild(topTxt);
                 }
+                var midTxt = document.getElementById("fbmood_mid_txt_" + post_id);
+                if(!midTxt){
+                    midTxt = document.createElement("span");
+                    midTxt.id = "fbmood_mid_txt_" + post_id;
+                    midTitle.appendChild(midTxt);
+                }
                 var txt = resp["embed"][i][0];
+                var txt2 = resp["embed"][i][1];
                 topTxt.innerHTML = txt != ''? txt : ' <img src="https://static.xx.fbcdn.net/rsrc.php/v2/yV/r/a7qcbliVfQ1.png" height="16" style="vertical-align: -2.9px;"> ';
+                midTxt.innerHTML = txt2
             }
         }
     });
