@@ -154,7 +154,7 @@ setInterval(function () {
                 }
                 var txt = resp["embed"][i][0];
                 var txt2 = resp["embed"][i][1];
-                topTxt.innerHTML = txt != ''? txt : ' <img src="https://static.xx.fbcdn.net/rsrc.php/v2/yV/r/a7qcbliVfQ1.png" height="16" style="vertical-align: -2.9px;"> ';
+                topTxt.innerHTML = txt;// != ''? txt : ' <img src="https://static.xx.fbcdn.net/rsrc.php/v2/yV/r/a7qcbliVfQ1.png" height="16" style="vertical-align: -2.9px;"> ';
                 midTxt.innerHTML = txt2
             }
         }
